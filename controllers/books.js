@@ -1,5 +1,6 @@
 import express from "express"
 import PostBook from "../models/book.js"
+import mongoose from "mongoose";
 
 
 //const router = express.Router()
@@ -10,7 +11,7 @@ export const addBook = async (req,res) => {
     
     try {
         await newPostBook.save()
-        res.status(201).json(newPostMessage );
+        res.status(201).json(newPostBook );
     } catch (error) {
         res.status(409).json({ message: error.message });
     }
@@ -19,10 +20,23 @@ export const addBook = async (req,res) => {
 export const getBooks = async (req,res) => {
     try {
         const posts = await PostBook.find();
-        console.log("gieei"+posts)
+        //console.log("gieei"+posts)
         res.status(200).json(posts);
     } catch (error) {
         res.status(404).json({ message: error.message });
+    }
+}
+
+export const updateBook = async (req,res) => {
+    try {
+        const {id} = req.params;
+        const {bookName, author, price, genre, image} = req.body;
+        if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send(`No post with id: ${id}`);
+        const updatedPost = {bookName, author, price, genre, image}
+        await PostBook.findByIdAndUpdate(id, updatedPost, { new: true });
+        res.json(updatedPost);
+    } catch (error) {
+        console.log(error)
     }
 }
 
