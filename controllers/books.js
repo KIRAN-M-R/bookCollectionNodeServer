@@ -3,6 +3,7 @@ import PostBook from "../models/book.js"
 import mongoose from "mongoose";
 
 
+
 //const router = express.Router()
 export const addBook = async (req,res) => {
     const post = req.body;
@@ -48,6 +49,17 @@ export const deleteBook = async (req,res) => {
     await PostBook.findByIdAndRemove(id);
 
     res.json({ message: "Post deleted successfully." });
+}
+
+export const getBookBySearch = async (req,res) => {
+    const {searchQuery} = req.query;
+    console.log("k"+searchQuery)
+    const searchTerm = new RegExp(searchQuery,"i");
+    const post = await PostBook.find({bookName: searchTerm})
+    //console.log('i')
+    res.json({post})
+    //console.log("post"+JSON.stringify(post))
+    //console.log('j')
 }
 
 //export default router
